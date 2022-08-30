@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@grpc/grpc-js": "^1.6.10",
+    "@grpc/proto-loader": "^0.7.2",
+    "node-localstorage": "^2.2.1"
+  },
+  "scripts": {
+    "start": "node ./scripts/start.js"
+  }
+}

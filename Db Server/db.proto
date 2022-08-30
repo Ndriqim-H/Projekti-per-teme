@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package Yahtzee;
+option java_package = "Yahtzee.service";
+
+service YahtzeeService {
+  rpc setLastScore(Score) returns (Username);
+  rpc getScore(Username) returns (Score);
+}
+
+service AuthenticateService {
+  rpc getUser(Username) returns (User);
+  rpc createUser(User) returns (Username);
+  rpc getPassword(Username) returns (Password);
+  rpc setPassword(Password) returns (Username);
+}
+
+message Username{
+  string username = 1;
+  bool exists = 2;
+}
+
+message Score{
+  string username = 1;
+  int32 lastScore = 2;
+  int32 highScore = 3;
+  bool exists = 4;
+}
+
+message Password{
+  string username = 1;
+  string password = 2;
+  string salt = 3;
+  bool exists = 4;
+}
+
+message User {
+  string username = 1;
+  string password = 2;
+  string salt = 3;
+  int32 lastScore = 4;
+  int32 highScore = 5;
+  string name = 6;
+  string lastName = 7;
+  string email = 8;
+  bool exists =9;
+  
+}
+
+message Valid{
+  bool allow = 1;
+}
+
+
+message EmptyRequest {}

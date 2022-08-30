@@ -1,0 +1,28 @@
+syntax = "proto3";
+option java_package = "Yahtzee.service";
+
+package Yahtzee;
+
+service YahtzeeService {
+  rpc setLastScore(Score) returns (Username);
+  rpc getScore(Username) returns (Score);
+}
+
+service serveClient{
+  rpc getScore(Username) returns (Score);
+  rpc setLastScore(Score) returns (Username);
+}
+
+message Username{
+  string username = 1;
+  bool exists = 2;
+}
+
+message Score{
+  string username = 1;
+  int32 lastScore = 2;
+  int32 highScore = 3;
+  bool exists = 4;
+}
+
+message EmptyRequest {}
