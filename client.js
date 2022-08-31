@@ -7,38 +7,68 @@ const { serveClient } = defs.Yahtzee;
 const Authclient = new serveClient('localhost:7070', grpc.credentials.createInsecure());
 const Yahtzeeclient = new serveClient('localhost:7072', grpc.credentials.createInsecure());
 
-Yahtzeeclient.getScore({ username: 'DaBest' }, (err, res) => {
+// Yahtzeeclient.getScore({ username: 'DaBest' }, (err, res) => {
+//     if(err)
+//     {
+//         console.error(err);
+//     }
+//     else{
+//         var test = {name: 'DaBest', lastName: "Hernandez"};
+//         if(!res.exists)
+//         {
+//             console.log('Given user does not exist!');
+//         }
+//         else{
+//             console.log(res);
+//         }
+//     }
+// });
+
+// Authclient.verifyPassword({ username: 'DaBest', password: '123123456' }, (err, res) => {
+//     if(err){
+//         console.error(err);
+//     }
+//     else{
+//         console.log(res);
+//         if(res.valid)
+//         {
+//             console.log('Valid password!');
+//         }
+//         else{
+//             console.log('Invalid password!');
+//         }
+//     }
+// });
+
+var call = Authclient.getAllUsersStream({}, (err, res) => {
     if(err)
     {
         console.error(err);
     }
     else{
-        var test = {name: 'DaBest', lastName: "Hernandez"};
-        if(!res.exists)
-        {
-            console.log('Given user does not exist!');
-        }
-        else{
-            console.log(res);
-        }
+        console.log(res);
     }
 });
 
-Authclient.verifyPassword({ username: 'DaBest', password: '123123456' }, (err, res) => {
-    if(err){
-        console.error(err);
-    }
-    else{
-        console.log(res);
-        if(res.valid)
-        {
-            console.log('Valid password!');
-        }
-        else{
-            console.log('Invalid password!');
-        }
-    }
+call.on('data', (res) => {
+    console.log(res);
 });
+
+call.on('end', () => {
+    console.log('Stream ended!');
+});
+
+// Authclient.getFile({fileName: "test.txt"}, (err, res) => {
+//     if(err)
+//     {
+//         console.error(err);
+//     }
+//     else{
+//         console.log(res.message);
+//     }
+
+// });
+
 // Yahtzeeclient.getScore({ username: 'DaBest' }, (err, res) => {
 //   if (err) {
 //     console.error(err);

@@ -15,6 +15,9 @@ module.exports = function (){
     verifyPassword: serv.clientVerifyPassword.bind(serv),
     setPassword: serv.clientSetPassword.bind(serv),
     createUser: serv.clientCreateUser.bind(serv),
+    getAllUsers: serv.clientGetAllUsers.bind(serv),
+    getFile: serv.clientGetFile.bind(serv),
+    getAllUsersStream: serv.clientGetAllUsersStream.bind(serv),
   });
 
   server.bindAsync('0.0.0.0:7070', grpc.ServerCredentials.createInsecure(), (err, port) => {

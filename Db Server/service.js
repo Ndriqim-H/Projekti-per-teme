@@ -45,6 +45,12 @@ class DbService {
     // returnUser = users.find((u) => u.username === user.username);
   }
 
+  getAllUsers(call, cb) {
+    const users = this.getDb();
+    var allUsers = {users: users, message: 'All users'};
+    cb(null, allUsers);
+  }
+
   getPassword(call, cb) {
     const users = this.getDb();
     let user = call.request;

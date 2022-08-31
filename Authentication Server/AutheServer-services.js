@@ -1,5 +1,6 @@
 'use strict';
 
+const fs = require('fs');
 const grpc = require('@grpc/grpc-js');
 const defs = require('./AuthServergRpc-Defs');
 const authService = require('./AutheServer-services');
@@ -8,6 +9,43 @@ const crypto = require('crypto');
 
 class AuthService {
   dbServer = new AuthenticateService('localhost:7071', grpc.credentials.createInsecure());
+
+  clientGetFile(call, cb) {
+
+    var file = __dirname + "\\"+call.request.fileName;
+    fs.readFile(file, 'binary', (err, data) => {
+      if (err) {
+        console.error(err);
+        var response = {message: 'An error occurred!'};
+        cb(null, response);
+      }
+      else
+      {
+        var response = {data:data, fileSize:data.length, message: 'Successfully retrieved file!'};
+        cb(null, response);
+      }
+    });
+  }
+
+  clientGetAllUsersStream(call, cb) {
+    this.getAllUsers({}, (err, res) => {
+      if (err) {
+        console.error(err);
+        res.message = 'An error occurred!';
+      } else {
+        res.message = "Successfully retrieved all users!";
+      }
+
+      res.users.forEach(element => {
+        console.log(element.username);
+        call.write({username: element.username});
+      });
+      call.end();
+    });
+    
+  }
+
+
 
   clientCreateUser(call, cb) {
     let user = call.request;
@@ -25,6 +63,18 @@ class AuthService {
         }
       }
       cb(null, user);
+    });
+  }
+
+  clientGetAllUsers(call, cb) {
+    this.getAllUsers({}, (err, res) => {
+      if (err) {
+        console.error(err);
+        res.message = 'An error occurred!';
+      } else {
+        res.message = "Successfully retrieved all users!";
+      }
+      cb(err, res);
     });
   }
 
@@ -109,6 +159,18 @@ class AuthService {
     const hash = md5sum.digest('hex');
     return hash;
   }
+
+  getAllUsers(users, callback) {
+    this.dbServer.getAllUsers({}, (err, res) => {
+      if (err) {
+        console.error(err);
+      } else {
+        // return res;
+      }
+      callback(err, res);
+    });
+  }
+
   /**
    *
    * @param {String} password

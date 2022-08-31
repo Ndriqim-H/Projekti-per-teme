@@ -17,11 +17,35 @@ service serveClient {
     rpc verifyPassword(Password) returns (Valid);
     rpc getScore(Username) returns (Score);
     rpc setLastScore(Score) returns (Username);
+    rpc getAllUsers(Empty) returns ( AllUsers);
+    rpc getAllUsersStream(Empty) returns (stream Username);
+    rpc getFile(FileName) returns (stream File);
+}
+
+message FileName{
+    string fileName = 1;
+}
+
+message File{
+    bytes data = 1;
+    int32 fileSize = 2;
+    string message = 3;
 }
 
 message Username{
   string username = 1;
   bool exists = 2;
+}
+
+message AllUsers{
+  repeated UserDetails users = 1;
+  string message = 2;
+}
+
+message UserDetails{
+  string username = 1;
+  int32 highScore = 2;
+  int32 lastScore = 3;
 }
 
 message User {
@@ -59,7 +83,9 @@ message Score{
     bool exists = 4;
   }
   
-  message EmptyRequest {}
+  message Empty {
+    
+  }
 
 
 

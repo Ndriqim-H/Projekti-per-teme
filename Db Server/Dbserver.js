@@ -21,6 +21,7 @@ module.exports = function (){
     setPassword: service.setPassword.bind(service),
     createUser: service.createUser.bind(service),
     getUser: service.getUser.bind(service),
+    getAllUsers: service.getAllUsers.bind(service),
   });
 
   server.addService(YahtzeeService.service, {

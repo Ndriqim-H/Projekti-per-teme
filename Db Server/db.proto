@@ -13,11 +13,23 @@ service AuthenticateService {
   rpc createUser(User) returns (Username);
   rpc getPassword(Username) returns (Password);
   rpc setPassword(Password) returns (Username);
+  rpc getAllUsers(Empty) returns (AllUsers);
 }
 
 message Username{
   string username = 1;
   bool exists = 2;
+}
+
+message AllUsers{
+  repeated UserDetails users = 1;
+  string message = 2;
+}
+
+message UserDetails{
+  string username = 1;
+  int32 highScore = 2;
+  int32 lastScore = 3;
 }
 
 message Score{
@@ -43,7 +55,7 @@ message User {
   string name = 6;
   string lastName = 7;
   string email = 8;
-  bool exists =9;
+  bool exists = 9;
   
 }
 
@@ -52,4 +64,6 @@ message Valid{
 }
 
 
-message EmptyRequest {}
+message Empty {
+  
+}
