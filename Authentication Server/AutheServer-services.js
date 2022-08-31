@@ -13,18 +13,28 @@ class AuthService {
   clientGetFile(call, cb) {
 
     var file = __dirname + "\\"+call.request.fileName;
-    fs.readFile(file, 'binary', (err, data) => {
-      if (err) {
-        console.error(err);
-        var response = {message: 'An error occurred!'};
-        cb(null, response);
-      }
-      else
-      {
-        var response = {data:data, fileSize:data.length, message: 'Successfully retrieved file!'};
-        cb(null, response);
-      }
+    // fs.readFile(file, 'binary');
+    var fileStream = fs.createReadStream(file);
+    fileStream.on('data', function(chunk) {
+      console.log('chunk: ' + chunk);
+      call.write({data: chunk, fileSize: chunk.length, message: "Successfully retrieved file!"});
     });
+
+    fileStream.on('end', function() {
+      call.end();
+    });
+    
+      // if (err) {
+      //   console.error(err);
+      //   var response = {message: 'An error occurred!'};
+      //   cb(null, response);
+      // }
+      // else
+      // {
+      //   var response = {data:data, fileSize:data.length, message: 'Successfully retrieved file!'};
+      //   cb(null, response);
+      // }
+    
   }
 
   clientGetAllUsersStream(call, cb) {

@@ -10,8 +10,8 @@
             "name": "Launch Program",
             
             // "program": "${workspaceFolder}\\Authentication Server\\AuthServer.js",
-            "program": "${workspaceFolder}\\client.js",
-            // "program":"${workspaceFolder}\\scripts\\start.js",        
+            // "program": "${workspaceFolder}\\client.js",
+            "program":"${workspaceFolder}\\scripts\\start.js",        
         }
     ]
 }

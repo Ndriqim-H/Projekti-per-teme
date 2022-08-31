@@ -17,7 +17,7 @@ service serveClient {
   rpc createUser(User) returns (Username);
   rpc setPassword(Password) returns (Valid);
   rpc getAllUsers(Empty) returns ( AllUsers);
-  rpc getAllUsersStream(Empty) returns ( stream Username);
+  rpc getAllUsersStream(Empty) returns (stream Username);
   rpc getFile(FileName) returns (stream File);
 }
 
