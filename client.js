@@ -1,5 +1,8 @@
 'use strict';
 
+const cliProgress = require('cli-progress');
+const colors = require('ansi-colors');
+
 const fs = require('fs');
 const grpc = require('@grpc/grpc-js');
 const defs = require('./client-gRPC-defs');
@@ -59,39 +62,60 @@ const Yahtzeeclient = new serveClient('localhost:7072', grpc.credentials.createI
 //     console.log('Stream ended!');
 // });
 
-var fileDownload = Authclient.getFile({ fileName: 'Gordon.jpg' }, (err, res) => {
-    if(err)
-    {
-        console.error(err);
-    }
-    else{
-        console.log(res);
-    }
-});
+var fileName = "test6";
+var fileDownload = Authclient.getFile({ fileName: 'gordon.jpg' });
 
 var file;
 var fileSize = 0;
+var chunkSize = 0;
 var downloadedFile = {};
 // var picture = fs.createWriteStream('test.jpg');
+
+fs.writeFileSync(fileName, '');
+// const bar1 = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
+const bar1 = new cliProgress.SingleBar({
+    format: 'CLI Progress |' + colors.cyan('{bar}') + '| {percentage}% || {value}/{total} Chunks || Speed: {speed}',
+    barCompleteChar: '\u2588',
+    barIncompleteChar: '\u2591',
+    hideCursor: true
+});
+// bar1.start(100, 0);
+bar1.start(100, 0, {
+    speed: "N/A"
+});
+
 
 fileDownload.on('data', (res) => {
     // console.log(res);
     // file += res.data;
-    
-    fileSize += res.fileSize;
-    
+    fs.appendFileSync(fileName, res.data);
+    var fileSize = res.fileSize;
+    chunkSize += res.chunkSize;
+    // bar1.update(chunkSize/fileSize * 100);
+    bar1.increment(res.chunkSize/fileSize * 100);
+
 });
+
+
 
 
 fileDownload.on('end', () => {
-    console.log('Stream ended!');
-    console.log({
-        // file: file,
-        fileSize: fileSize
-    });
-    fs.writeFileSync('test.jpg', file);
+    bar1.stop();
+    console.log('=======================');
+    console.log('\nStream ended!');
+    var fileStat = fs.statSync(fileName);
+    console.log('File size: ' + chunkSize);
+    console.log('File size 2: ' + fileStat.size);
+    
+}).on('error', (err) => {
+    console.error(err);
 });
 
+process.on('SIGINT', (code) => {
+    console.log('\nAbout to exit with code: ' + code);
+    fileDownload.cancel();
+    
+});
 
 // Authclient.getAllUsers({},(err,res)=>{
 //     if(err)
