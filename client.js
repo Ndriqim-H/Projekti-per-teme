@@ -73,26 +73,55 @@ var file;
 var fileSize = 0;
 var downloadedFile = {};
 // var picture = fs.createWriteStream('test.jpg');
+var fileName = 'test1.jpg';
+var fileExists = fs.existsSync(fileName);
 
+if(fileExists) {
+    fs.writeFileSync(fileName, '');
+}
+var fileBytes = fs.statSync(fileName).size;
 fileDownload.on('data', (res) => {
     // console.log(res);
     // file += res.data;
+    fs.appendFile(fileName, res.data, (err) => {
+        if(err)
+        {
+            console.error(err);
+        }
+        fileBytes = fs.statSync(fileName).size;
+        
+    });
+    // fs.closeSync(file);
     
     fileSize += res.fileSize;
-    
+    // console.log(fileSize, fileBytes);
 });
 
 
 fileDownload.on('end', () => {
     console.log('Stream ended!');
-    console.log({
-        // file: file,
-        fileSize: fileSize
-    });
-    fs.writeFileSync('test.jpg', file);
+    
+    fileBytes = fs.statSync(fileName);
+    console.log(fileSize, fileBytes.size);
+
+    // console.log({
+    //     // file: file,
+    //     fileSize: fileSize
+    // });
+    // fs.writeFileSync('test.jpg', file);
+
+    getFileSize(fileName);
+    setTimeout(() => {
+        fileBytes = fs.statSync(fileName);
+        console.log(fileSize, fileBytes.size);
+    }, 1);
 });
 
-
+function getFileSize(fileName)
+{
+    fileBytes = fs.statSync(fileName);
+    console.log(fileSize, fileBytes.size);
+}
 // Authclient.getAllUsers({},(err,res)=>{
 //     if(err)
 //     {
