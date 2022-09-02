@@ -11,7 +11,7 @@ const { serveClient } = defs.Yahtzee;
 const Authclient = new serveClient('localhost:7070', grpc.credentials.createInsecure());
 const Yahtzeeclient = new serveClient('localhost:7072', grpc.credentials.createInsecure());
 
-fileDownload("test8", "./test");
+fileDownload("test8.jpg", "./gordon.jpg");
 
 // Yahtzeeclient.getScore({ username: 'DaBest' }, (err, res) => {
 //     if(err)
