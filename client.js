@@ -11,6 +11,8 @@ const { serveClient } = defs.Yahtzee;
 const Authclient = new serveClient('localhost:7070', grpc.credentials.createInsecure());
 const Yahtzeeclient = new serveClient('localhost:7072', grpc.credentials.createInsecure());
 
+fileDownload("test8", "./test");
+
 // Yahtzeeclient.getScore({ username: 'DaBest' }, (err, res) => {
 //     if(err)
 //     {
@@ -62,69 +64,9 @@ const Yahtzeeclient = new serveClient('localhost:7072', grpc.credentials.createI
 //     console.log('Stream ended!');
 // });
 
-var fileName = "test6";
-var fileDownload = Authclient.getFile({ fileName: 'gordon.jpg' });
-
-var file;
-var fileSize = 0;
-var chunkSize = 0;
-var downloadedFile = {};
-// var picture = fs.createWriteStream('test.jpg');
-var fileName = 'test1.jpg';
-var fileExists = fs.existsSync(fileName);
-
-fs.writeFileSync(fileName, '');
-// const bar1 = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
-const bar1 = new cliProgress.SingleBar({
-    format: 'CLI Progress |' + colors.cyan('{bar}') + '| {percentage}% || {value}/{total} Chunks || Speed: {speed}',
-    barCompleteChar: '\u2588',
-    barIncompleteChar: '\u2591',
-    hideCursor: true
-});
-// bar1.start(100, 0);
-bar1.start(100, 0, {
-    speed: "N/A"
-});
-
-
-fileDownload.on('data', (res) => {
-    // console.log(res);
-    // file += res.data;
-    fs.appendFileSync(fileName, res.data);
-    var fileSize = res.fileSize;
-    chunkSize += res.chunkSize;
-    // bar1.update(chunkSize/fileSize * 100);
-    bar1.increment(res.chunkSize/fileSize * 100);
-
-});
 
 
 
-
-
-
-fileDownload.on('end', () => {
-    bar1.stop();
-    console.log('=======================');
-    console.log('\nStream ended!');
-    var fileStat = fs.statSync(fileName);
-    console.log('File size: ' + chunkSize);
-    console.log('File size 2: ' + fileStat.size);
-    
-}).on('error', (err) => {
-    console.error(err);
-});
-
-process.on('SIGINT', (code) => {
-    console.log('\nAbout to exit with code: ' + code);
-    fileDownload.cancel();
-    
-});
-function getFileSize(fileName)
-{
-    fileBytes = fs.statSync(fileName);
-    console.log(fileSize, fileBytes.size);
-}
 // Authclient.getAllUsers({},(err,res)=>{
 //     if(err)
 //     {
@@ -172,7 +114,7 @@ function getFileSize(fileName)
 //   }
 // });
 
-// Authclient.verifyPassword({ username: 'DaBest', password: 'Ndriqa159' }, (err, res) => {
+// Authclient.verifyPassword({ username: 'DaBest', password: '123123456' }, (err, res) => {
 //   if (err) {
 //     console.error(err);
 //   } else {
@@ -219,3 +161,67 @@ function getFileSize(fileName)
 //     }
 //   }
 // );
+
+
+function fileDownload(filename = 'Downloaded Foto.jpg', filepath = './Gordon.jpg') {
+    var fileName = filename;
+    var fileDownload = Authclient.getFile({ fileName: filepath });
+
+    var file;
+    var fileSize = 0;
+    var chunkSize = 0;
+    var downloadedFile = {};
+    // var picture = fs.createWriteStream('test.jpg');
+    // var fileName = 'test1.jpg';
+    var fileExists = fs.existsSync(fileName);
+
+    fs.writeFileSync(fileName, '');
+    // const bar1 = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
+    const bar1 = new cliProgress.SingleBar({
+        format: 'CLI Progress |' + colors.cyan('{bar}') + `| {percentage}% || {value}/{total} Chunks || Duration: {duration}s || Speed: {speed}`,
+        // barCompleteChar: '\u2588',
+        // barIncompleteChar: '\u2591',
+        barCompleteChar: '#',
+        barIncompleteChar: '_',
+        hideCursor: true
+    });
+    // bar1.start(100, 0);
+    bar1.start(100, 0, {
+        speed: "N/A",
+    });
+
+
+    fileDownload.on('data', (res) => {
+        // console.log(res);
+        // file += res.data;
+        fs.appendFileSync(fileName, res.data);
+        var fileSize = res.fileSize;
+        chunkSize += res.chunkSize;
+        // bar1.update(chunkSize/fileSize * 100);
+        bar1.increment((res.chunkSize/fileSize) * 100);
+
+    });
+
+    fileDownload.on('end', () => {
+        bar1.stop();
+        console.log('=======================');
+        console.log('\nStream ended!');
+        var fileStat = fs.statSync(fileName);
+        console.log('File size: ' + chunkSize);
+        console.log('File size 2: ' + fileStat.size);
+        
+    }).on('error', (err) => {
+        console.error(err);
+    });
+
+    process.on('SIGINT', (code) => {
+        console.log('\nAbout to exit with code: ' + code);
+        fileDownload.cancel();
+        
+    });
+    function getFileSize(fileName)
+    {
+        fileBytes = fs.statSync(fileName);
+        console.log(fileSize, fileBytes.size);
+    }
+}

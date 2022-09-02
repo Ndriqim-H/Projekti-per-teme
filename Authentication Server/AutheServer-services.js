@@ -15,6 +15,26 @@ class AuthService {
     var file = __dirname + "\\"+call.request.fileName;
     // fs.readFile(file, 'binary');
     var fileStream = fs.createReadStream(file);
+    const fd = fs.openSync(file, 'r');
+
+    call.on('end', () => {
+      console.log('end');
+      
+      // fileStream.destroy(fd);
+      call.end();
+    });
+    
+    call.on('cancelled', function cancelCall() {
+      console.log('call cancelled');
+      // fileStream._destroy();
+      // fileStream = null;
+      // fileStream.destroy(fd);
+      fileStream.close();
+      call.end();
+      // call.removeListener('cancelled', cancelCall);
+      
+    });
+
     fileStream.on('data', function(chunk) {
       // console.log('chunk: ' + chunk);
       // console.log('chunk.length: ' + chunk.length);
@@ -26,24 +46,10 @@ class AuthService {
       //   fileStream = null;
       //   call.end();
       // });
-      
-      call.on('end', () => {
-        console.log('end');
-        fileStream._destroy();
-        call.end();
-      });
-      
-    });
-
-    fileStream.on('end', function() {
+    }).on('end', function() {
+      console.log('File stream ended!');
       call.end();
     });
-    
-    // call.on('cancelled', () => {
-    //   console.log('call cancelled');
-    //   fileStream._destroy();
-    //   call.end();
-    // });
     //.on('error', function(err) {
     //   console.log(err);
     //   call.end();
@@ -62,6 +68,9 @@ class AuthService {
       //   var response = {data:data, fileSize:data.length, message: 'Successfully retrieved file!'};
       //   cb(null, response);
       // }
+
+   
+    
     
   }
 
