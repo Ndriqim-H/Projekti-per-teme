@@ -27,8 +27,9 @@ message FileName{
 
 message File{
   bytes data = 1;
-  int32 fileSize = 2;
-  string message = 3;
+  int64 fileSize = 2;
+  int32 chunkSize = 3;
+  string message = 4;
 }
 
 

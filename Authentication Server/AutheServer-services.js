@@ -16,13 +16,41 @@ class AuthService {
     // fs.readFile(file, 'binary');
     var fileStream = fs.createReadStream(file);
     fileStream.on('data', function(chunk) {
-      console.log('chunk: ' + chunk);
-      call.write({data: chunk, fileSize: chunk.length, message: "Successfully retrieved file!"});
+      // console.log('chunk: ' + chunk);
+      // console.log('chunk.length: ' + chunk.length);
+      call.write({data: chunk, chunkSize: chunk.length, fileSize: fs.statSync(file).size, message: "Successfully retrieved file!"});
+
+      // call.on('cancelled', () => {
+      //   console.log('cancelled');
+      //   fileStream._destroy();
+      //   fileStream = null;
+      //   call.end();
+      // });
+      
+      call.on('end', () => {
+        console.log('end');
+        fileStream._destroy();
+        call.end();
+      });
+      
     });
 
     fileStream.on('end', function() {
       call.end();
     });
+    
+    // call.on('cancelled', () => {
+    //   console.log('call cancelled');
+    //   fileStream._destroy();
+    //   call.end();
+    // });
+    //.on('error', function(err) {
+    //   console.log(err);
+    //   call.end();
+    // }).on('cancelled', function() {
+    //   console.log('cancelled');
+    //   call.end();
+    // });
     
       // if (err) {
       //   console.error(err);
